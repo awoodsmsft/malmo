@@ -121,6 +121,9 @@ timeStampAtLastCheck = datetime.datetime.now()
 cyclesPerCheck = 10 # controls how quickly the agent responds to getting stuck, and the amount of time it waits for on a "wait" command.
 currentCycle = 0
 waitCycles = 0
+bedLocation = "unknown"
+spawnPoint = "unknown"
+numberOfJumps = 0
 
 # Main loop:
 while world_state.is_mission_running:
@@ -134,7 +137,10 @@ while world_state.is_mission_running:
                 waitCycles -= 1
             # Now use the latest observation to calculate our approximate speed:
             data = json.loads(obvsText) # observation comes in as a JSON string...
+            bedLocation = data.get(u'BedLocation', "")
+            spawnPoint = data.get(u'SpawnPoint', "")
             dist = data.get(u'DistanceTravelled', 0)    #... containing a "DistanceTravelled" field (amongst other things).
+            numberOfJumps = data.get(u'NumberOfJumps', 0)
             timestamp = world_state.observations[-1].timestamp  # timestamp arrives as a python DateTime object
 
             delta_dist = dist - distTravelledAtLastCheck
@@ -145,6 +151,7 @@ while world_state.is_mission_running:
             timeStampAtLastCheck = timestamp
 
     if waitCycles == 0:
+
         # Time to execute the next command, if we have one:
         if currentSequence != "":
             commands = currentSequence.split(";", 1)
@@ -159,6 +166,9 @@ while world_state.is_mission_running:
                 waitCycles = int(param.strip())
             else:
                 agent_host.sendCommand(command)    # Send the command to Minecraft.
+#            print("  --BedLocation: " + bedLocation)
+            print("  --NumberOfJumps: " + str(numberOfJumps))
+            print("  --SpawnPoint: " + spawnPoint)
                 
     if currentSequence == "" and currentSpeed < 50 and waitCycles == 0: # Are we stuck?
         currentSequence = random.choice(commandSequences)   # Choose a random action (or insert your own logic here for choosing more sensibly...)

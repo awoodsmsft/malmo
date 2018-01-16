@@ -25,14 +25,18 @@ set( OTHER_FILES
   ${CMAKE_SOURCE_DIR}/Malmo/samples/Python_examples/tutorial_6.xml
 )
 
-python_add_module( MalmoPython SHARED ${CPP_SOURCES} )
+python_add_module( MalmoPython SHARED ${CPP_SOURCES} )  
 include_directories( MalmoPython ${PYTHON_INCLUDE_DIRS} )
-target_link_libraries( MalmoPython Malmo ${PYTHON_LIBRARIES} )
-# message(STATUS "DebugAWoods: Python3_Libraries ${PYTHON3_LIBRARIES} Python_Libraries ${PYTHON_LIBRARIES} Python_Library ${PYTHON_LIBRARY}")
+# @todo awoods 1/16/18; determine how to force CMake to use the Release version of the Python library because
+# the Debug version does not implement all of the declarations and we don't want to use the runtime debug Python
+# target_link_libraries( MalmoPython Malmo ${PYTHON_LIBRARIES} )
+message(STATUS "DebugAWoods: Python_Libraries:${PYTHON_LIBRARIES}  Python_Library:${PYTHON_LIBRARY}  Python_Include_Dirs:${PYTHON_INCLUDE_DIRS}")
 if( MSVC )
   target_link_libraries(MalmoPython "C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/libs/python36.lib")
   set_property( TARGET MalmoPython APPEND PROPERTY COMPILE_DEFINITIONS "BOOST_PYTHON_STATIC_LIB=1" ) 
 elseif( APPLE )
+  # see comment about about Release version of Python library.  I don't think it's an issue on non-Windows builds...maybe
+  target_link_libraries( MalmoPython Malmo ${PYTHON_LIBRARIES} )
   set_property( TARGET MalmoPython PROPERTY SUFFIX ".so" )
 endif()
 

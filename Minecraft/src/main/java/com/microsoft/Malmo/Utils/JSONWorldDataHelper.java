@@ -111,6 +111,7 @@ public class JSONWorldDataHelper
         json.addProperty("PlayersKilled", sfw.readStat((StatBase)StatList.PLAYER_KILLS));
         json.addProperty("DamageTaken", sfw.readStat((StatBase)StatList.DAMAGE_TAKEN));
         json.addProperty("DamageDealt", sfw.readStat((StatBase)StatList.DAMAGE_DEALT));
+        json.addProperty("NumberOfJumps", sfw.readStat((StatBase)StatList.JUMP));
 
         /* Other potential reinforcement signals that may be worth researching:
         json.addProperty("BlocksDestroyed", sfw.readStat((StatBase)StatList.objectBreakStats) - but objectBreakStats is an array of 32000 StatBase objects - indexed by block type.);
@@ -130,6 +131,25 @@ public class JSONWorldDataHelper
         json.addProperty("IsAlive", !player.isDead);
         json.addProperty("Air", player.getAir());
         json.addProperty("Name", player.getName());
+        BlockPos bedLocation = player.getBedLocation();
+        if (bedLocation == null){
+            json.addProperty("BedLocation", "null");
+        } else {
+            int bedX = bedLocation.getX();
+            int bedY = bedLocation.getY();
+            int bedZ = bedLocation.getZ();
+            json.addProperty("BedLocation", bedX + "," + bedY + "," + bedZ);
+        }
+        BlockPos spawnPoint = player.world.getSpawnPoint();
+        if (spawnPoint == null){
+            json.addProperty("SpawnPoint", "null");
+        } else {
+            int spawnPointX = spawnPoint.getX();
+            int spawnPointY = spawnPoint.getY();
+            int spawnPointZ = spawnPoint.getZ();
+            json.addProperty("SpawnPoint", spawnPointX + "," + spawnPointY + "," + spawnPointZ);
+        }
+        
     }
     
     /** Builds the player position data to be used as observation signals by the listener.

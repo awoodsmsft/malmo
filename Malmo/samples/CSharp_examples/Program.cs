@@ -43,7 +43,7 @@ class Program
         }
 
         MissionSpec mission = new MissionSpec();
-        mission.timeLimitInSeconds(10);
+        mission.timeLimitInSeconds(90);
         mission.requestVideo( 320, 240 );
         mission.rewardForReachingPosition(19.5f,0.0f,19.5f,100.0f,1.1f);
 
